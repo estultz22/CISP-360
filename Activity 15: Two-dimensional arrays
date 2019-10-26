@@ -1,0 +1,92 @@
+#include <iostream>
+
+using std::cout;
+using std::endl;
+using std::cin;
+
+void arraya(int [][10], int, int);
+void arrayb(int twod[][10], int, int);
+void arrayc(int twod[][10], int, int);
+void arrayd(int twod[][10], int, int);
+void arraye(int twod[][10], int, int);
+
+int main()
+{
+    int rows,
+        cols;
+
+    cout << "Enter rows and columns with a space in between: ";
+    cin >> rows >> cols;
+
+    int numArray[][10] = {{8, 0, 3, 6, 3}, {1, 3, 1, 0, 7}, {2, 7, 9, 4, 5}};
+
+    arraya(numArray, rows, cols);
+    arrayb(numArray, rows, cols);
+    arrayc(numArray, rows, cols);
+    arrayd(numArray, rows, cols);
+    arraye(numArray, rows, cols);
+
+
+
+    return 0;
+}
+
+void arraya(int twod[][10], int rows, int columns)
+{
+    int r;
+    int c;
+    cout << "array a." << endl;
+    for (c = 0; c < columns; c++) {
+        for (r = 0; r < rows; r++)
+            cout << " " << twod[r][c];
+        cout << endl;
+    }
+}
+
+void arrayb(int twod[][10], int rows, int columns)
+{
+    int r;
+    int c;
+    cout << "array b." << endl;
+    for (r = 0; r < rows; r++) {
+        for (c = columns - 1; c >= 0; c--)
+            cout << " " << twod[r][c];
+        cout << endl;
+    }
+}
+
+void arrayc(int twod[][10], int rows, int columns)
+{
+    int r;
+    int c;
+    cout << "array c." << endl;
+    for (r = rows - 1; r >= 0; r--) {
+        for (c = 0; c < columns; c++)
+            cout << " " << twod[r][c];
+        cout << endl;
+    }
+}
+
+void arrayd(int twod[][10], int rows, int columns)
+{
+    int r;
+    int c;
+    cout << "array d." << endl;
+    for (c = 0; c < columns; c++) {
+        for (r = rows - 1; r >= 0; r--)
+            cout << " " << twod[r][c];
+        cout << endl;
+    }
+}
+
+void arraye(int twod[][10], int rows, int columns)
+{
+    int r;
+    int c;
+    cout << "array e." << endl;
+    for (r = rows - 1; r >= 0; r--) {
+        for (c = columns - 1; c >= 0; c--)
+            cout << " " << twod[r][c];
+        cout << endl;
+    }
+}
