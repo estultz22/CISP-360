@@ -27,6 +27,11 @@ int main()
     cout << "And the result is: " << result << endl;
     cout << "Memory location of xPtr: " << firstNum << endl;
     cout << "Memory location of yPtr: " << secondNum << endl;
+    
+    //not in the original file:
+    delete firstNum;
+    delete secondNum;
+    
     return 0;
 }
 
