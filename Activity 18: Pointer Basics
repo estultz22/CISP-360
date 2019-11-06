@@ -1,0 +1,40 @@
+#include <iostream>
+
+using std::cin;
+using std::cout;
+using std::endl;
+
+
+int doMultipleThings(int *, int *);
+
+int main()
+{
+    //initialize pointers to null
+    int *firstNum = nullptr;
+    int *secondNum = nullptr;
+    int result;
+    
+    //dynamically allocate two ints
+    firstNum = new int;
+    secondNum = new int;
+
+    //input
+    cout << "Enter two numbers separated by a space: ";
+    cin >> *firstNum >> *secondNum;
+
+    result = doMultipleThings(firstNum, secondNum);
+
+    cout << "And the result is: " << result << endl;
+    cout << "Memory location of xPtr: " << firstNum << endl;
+    cout << "Memory location of yPtr: " << secondNum << endl;
+    return 0;
+}
+
+int doMultipleThings(int *numx, int *numy)
+{
+    int temp = *numx;
+    *numx = *numy * 10;
+    *numy = temp * 10;
+
+    return *numx + *numy;
+}
