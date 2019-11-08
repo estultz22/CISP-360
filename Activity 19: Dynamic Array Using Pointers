@@ -1,0 +1,83 @@
+#include <iostream>
+
+using std::cin;
+using std::cout;
+using std::endl;
+
+float *reverseArray(float *, int);
+void printArray(float *, int);
+float getFloat();
+int getInt();
+
+int main()
+{
+    int asize = 2,
+        acount = 0;
+
+    float newNum;
+
+    cout << "How many numbers would you like? ";
+    asize = getInt();
+    cout << endl;
+
+    float *arr = new float[asize];
+
+    while(acount < asize)
+    {
+        cout << "Enter number " << acount + 1 << ": ";
+        newNum = getFloat();
+        *(arr + acount) = newNum;
+        acount++;
+    }
+    cout << endl;
+
+    printArray(arr, asize);
+
+    arr = reverseArray(arr, asize);
+
+    cout << "\nAfter reversing: \n";
+
+    printArray(arr, asize);
+
+    delete [] arr;
+    return 0;
+}
+
+
+float *reverseArray(float *p, int arrSize)
+{
+    float *revArr = new float[arrSize];
+
+    for (int i = 0, k = arrSize - 1; i < arrSize; i++, k--)
+    {
+        *(revArr + i) = *(p + k);
+    }
+
+    delete [] p;
+
+    return revArr;
+}
+
+void printArray(float *p, int arrSize)
+{
+    for (int i = 0; i < arrSize; i++)
+    {
+        cout << "Number " << i + 1 << ": " << *(p + i) << endl;
+    }
+}
+
+float getFloat()
+{
+    float num;
+    cin >> num;
+
+    return num;
+}
+
+int getInt()
+{
+    int num;
+    cin >> num;
+
+    return num;
+}
