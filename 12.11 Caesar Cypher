@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define STR_SIZE 20;
+
+void convertToUppercase(char[]);
+void encrypt(char[], int);
+void decrypt(char[], int);
+void printMenu(void);
+int getInt(void);
+
+int main(void)
+{
+    int quitNum = 3,
+        menuNum,
+        inputKey;
+
+    char userStr[20];
+
+    do
+    {
+        printMenu();
+        menuNum = getInt();
+
+        if (menuNum == 1)//encrypt
+        {
+            printf("%s", "Enter the shift key: ");
+            inputKey = getInt();
+
+            printf("%s", "Enter the string to encrypt: ");
+            scanf("%s", userStr);
+
+            convertToUppercase(userStr);
+
+            encrypt(userStr, inputKey);
+
+            printf("%s%s\n", "Here is your encrypted string: \n",userStr);
+
+        }
+        else if (menuNum == 2)//decrypt
+        {
+            printf("%s", "Enter the shift key: ");
+            inputKey = getInt();
+
+            printf("%s", "Enter the string to decrypt: ");
+            scanf("%s", userStr);
+
+            convertToUppercase(userStr);
+
+            decrypt(userStr, inputKey);
+            printf("%s%s\n", "Here is your decrypted string: \n", userStr);
+
+        }
+        
+
+    } while (menuNum != quitNum);
+    
+     return 0;
+}
+
+void printMenu(void)
+{
+    printf("%s\n", "Enter the number of your selection:");
+    printf("%s%s%s", "1. Encrypt\n", "2. Decrypt\n", "3. Exit\n");
+}
+
+int getInt(void)
+{
+    int num;
+    scanf("%d", &num);
+
+    return num;
+}
+
+void convertToUppercase(char str[])
+{
+    int i = 0;
+
+    while (*(str + i) != '\0')
+    {
+        *(str + i) = toupper(*(str + i));
+
+        i++;
+    }
+}
+
+void encrypt(char str[], int key)
+{
+    for (int i = 0, len = strlen(str); i < len; i++)
+    {
+        *(str + i) = (((*(str + i) + key) - 65) % 26) + 65;
+    }
+}
+
+void decrypt(char str[], int key)
+{
+    for (int i = 0, len = strlen(str); i < len; i++)
+    {
+        *(str + i) = (((*(str + i) - key) + 65) % 26) + 65;
+    }
+}
