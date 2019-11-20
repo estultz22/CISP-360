@@ -1,0 +1,66 @@
+//Coin header file
+#ifndef COIN_H
+#define COIN_H
+#include <string>
+
+class coin
+{
+    public:
+        coin();
+        void toss();
+        unsigned int getSideUp() const;
+    private:
+        unsigned int sideUp;
+        std::string side;
+
+};
+
+#endif // COIN_H
+
+-------------------------------------------------------------------------------------------------------
+//coin.cpp
+#include "coin.h"
+#include <cstdlib>
+#include <ctime>
+
+//constructor
+coin::coin()
+{
+    srand(time(NULL));
+    sideUp = rand() % 2;
+}
+
+unsigned int coin::getSideUp() const
+{
+    return sideUp;
+}
+
+void coin::toss()
+{
+    sideUp = rand() % 2;
+
+    if (sideUp == 1)
+        side = "Heads";
+    else
+        side = "Tails";
+}
+----------------------------------------------------------------------------------------------------------------------------------------
+
+#include <iostream>
+#include "coin.h"
+
+using namespace std;
+
+int main()
+{
+
+    coin newCoin;
+
+    cout << newCoin.getSideUp();
+
+    newCoin.toss();
+
+    cout << newCoin.getSideUp();
+
+    return 0;
+}
