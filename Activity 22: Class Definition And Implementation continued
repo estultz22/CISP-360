@@ -1,0 +1,81 @@
+#include <iostream>
+#include "Coin.h"
+
+using std::endl;
+using std::string;
+using std::cout;
+
+void printSides(Coin, int);
+string triToss(int &, int &);
+
+enum sides {HEADS = 1, TAILS = 0};
+
+
+int main()
+{
+
+    Coin player1, player2;
+    int p1Ctr = 0, p2Ctr = 0;
+    string winnerStr;
+
+    cout << "Initial sides:\n";
+
+    printSides(player1, 1);
+    printSides(player2, 2);
+
+    cout << endl;
+
+    cout << "Tossing coins thrice... \n";
+
+    winnerStr = triToss(p1Ctr, p2Ctr);
+
+    cout << "\naaaand the winner is: ";
+
+    cout << winnerStr;
+
+    return 0;
+}
+
+void printSides(Coin player, int playerNum)
+{
+    string playStr = "Player ";
+    if (player.getSideUp() == HEADS)
+        cout << playStr << playerNum << ": Heads";
+    else
+        cout << playStr << playerNum << ": Tails";
+
+    cout << endl;
+}
+
+string triToss(int &p1Counter, int &p2Counter)
+{
+    string winner;
+    const int NUM_TOSSES = 3;
+    Coin p1, p2;
+
+    for (int i = 0; i < NUM_TOSSES; i++)
+    {
+        p1.toss();
+        p2.toss();
+
+        cout << "\nRound " << i + 1;
+        cout << endl;
+
+        printSides(p1, 1);
+        printSides(p2, 2);
+
+        if (p1.getSideUp() == HEADS)
+            p1Counter++;
+        else if (p2.getSideUp() == HEADS)
+            p2Counter++;
+    }
+
+    if (p1Counter > p2Counter)
+        winner = "Player 1!!!";
+    else
+        winner = "Player 2!!!";
+
+    return winner;
+}
+
+//coin.cpp and coin.h were not modified
