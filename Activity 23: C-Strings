@@ -1,0 +1,59 @@
+#include <iostream>
+#include <cctype>
+#include <iomanip>
+
+using std::cin;
+using std::cout;
+using std::endl;
+
+char *get_CString();
+int calc_Sum(char *);
+
+
+int main()
+{
+    int numSum = 0;
+    char *input;
+
+    input = get_CString();
+
+    cout << "You entered: " << input;
+
+    numSum = calc_Sum(input);
+
+    //cout << numSum;
+
+    return 0;
+}
+
+char *get_CString()
+{
+    int MAX_SIZE = 25;
+    char *input;
+
+    cout << "Enter the string you want filtered, 25 maximum: ";
+
+    cin >> setw(MAX_SIZE) >> input;
+
+    return input;
+}
+
+int calc_Sum(char *str)
+{
+    int index = 0,
+        sum = 0;
+    while(*(str + index) != '\0')
+    {
+        if (isdigit(*(str + index)))
+        {
+            sum += (*(str + index)) - '0';
+        }
+
+        index++;
+
+    }
+    cout << endl;
+    cout << "The sum of your string is: " << sum;
+
+    return sum;
+}
