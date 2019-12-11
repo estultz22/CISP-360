@@ -1,0 +1,400 @@
+#include <iostream>
+#include <fstream>
+#include <cctype>
+#include <string>
+#include <cstring>
+
+using namespace std;
+using std::cout;
+
+
+void printMenu();
+bool isValid(float);
+bool isValid(int);
+void addRecords(fstream &);
+bool isFileValid(string);
+bool init_File(fstream &, string, bool);
+int fileSearch(fstream &, char [],string);
+string getFileName();
+
+int changeRecord(string , int );
+
+const int ARR_SIZE = 20;
+
+struct inventory{
+    char description[ARR_SIZE],
+           productID[ARR_SIZE];
+
+    int qty;
+
+    float wsCost, 
+          retailCost;//wholesale and retail costs
+};
+
+int main()
+{
+    char quitChar = '4',
+         inputChar;
+    char searchProductID[ARR_SIZE];
+    char prodctID[ARR_SIZE];
+
+    string IOFileName;
+
+    fstream file;
+
+    inventory test;
+
+    bool outFileOpened;
+
+    int searchLoc;
+
+
+    IOFileName = getFileName();
+
+    do
+    {
+        cout << "Want to use a different file? y/Y for yes ->";
+        cin >> inputChar;
+
+        if(inputChar == 'y' || inputChar == 'Y') IOFileName = getFileName();
+
+        printMenu();
+
+        cin >> inputChar;
+
+        cin.ignore();
+
+        if (inputChar == '1')//add new records to file
+        {
+            outFileOpened = init_File(file, IOFileName, true);
+
+            if (!outFileOpened)
+                cout << "Could not append to file.\n";
+            else
+            {
+                do
+                {
+                    addRecords(file);
+
+                    cout << "\nContinue? y/Y to keep adding records: ";
+                    cin >> inputChar;
+
+                    cin.ignore();
+                }while (inputChar == 'y' || inputChar == 'Y');
+
+            }
+            file.close();
+        }
+        else if (inputChar == '2')//search and display a record
+        {
+            outFileOpened = init_File(file, IOFileName, false);
+
+            if (!outFileOpened)
+                cout << "Could not read file.\n";
+            else
+            {
+                cout << "What is the product ID?: ";
+                cin.getline(searchProductID, ARR_SIZE);
+                cout << endl;
+
+                searchLoc = fileSearch(file, searchProductID, IOFileName);
+
+                if (searchLoc == -1)
+                {
+                    cout << "Could not find " << searchProductID << "in the given file. Returning to main menu...\n\n";
+                }
+            }
+            
+            file.close();
+        }
+        else if (inputChar == '3')
+        {
+            outFileOpened = init_File(file, IOFileName, false);
+
+            if (!outFileOpened)
+                cout << "Could not find file.\n";
+            else
+            {
+                do
+                {
+                    cout << "Enter the product's ID whose record you want to change: -> ";
+                    cin.getline(searchProductID, ARR_SIZE);
+
+                    searchLoc = fileSearch(file, searchProductID, IOFileName);
+
+                    if (searchLoc == -1)
+                    {
+                        cout << "Could not find " << searchProductID << "in the given file.\n\n";
+                    }
+                    else
+                    {
+                        changeRecord(IOFileName, searchLoc);
+                    }
+                    
+
+                    cout << "\nContinue? y/Y to keep changing records: ";
+                    cin >> inputChar;
+
+                    cin.ignore();
+                }while (inputChar == 'y' || inputChar == 'Y');
+
+            }
+
+            file.close();
+        }
+
+    }while (inputChar != quitChar);
+
+
+
+    return 0;
+}
+bool isValid(float num)
+{
+    bool isValid = false;
+
+    if (num >= 0.0)
+        isValid = true;
+    else
+    {
+        cout << "Invalid entry detected! Try again.\n";
+    }
+
+    return isValid;
+}
+
+bool isValid(int num)
+{
+    bool isValid = false;  
+
+    if (num >= 0)
+        isValid = true;
+    else
+    {
+        cout << "Invalid entry detected! Try again.\n";
+    }
+
+    return isValid;
+}
+
+void printMenu()
+{
+    cout << "1.Add new records to the file\n";
+    cout << "2.Search and display a record in the file\n"; //(search should be based on product ID)
+    cout << "3.Change a record in the file\n"; //(you can change any member except the product ID)
+    cout << "4.Quit program\n";
+}
+
+bool isFileValid(string fileName)
+{
+    bool isFileValid = false;
+
+    int findDot = fileName.find('.');
+
+    string txt = ".dat";
+    string fileSubStr = fileName.substr(findDot, 4);
+
+    if (findDot != string::npos && fileSubStr == txt)
+        isFileValid = true;
+
+    return isFileValid;
+
+}
+
+void addRecords(fstream &outFile)
+{
+    inventory newRecord;
+
+    cout << "Enter Description: ";
+    cin.getline(newRecord.description, ARR_SIZE);
+    cout << endl;
+
+    cout << "Enter Product ID: ";
+    cin.getline(newRecord.productID, ARR_SIZE);
+    cout << endl;
+
+    cout << "Enter Quantity on hand: ";
+    cin >> newRecord.qty;
+
+    while(!isValid(newRecord.qty))
+    {
+        cout << "Enter Quantity on hand: ";
+
+        cin.clear();
+        cin.ignore(1000, '\n');
+
+        cin >> newRecord.qty;
+    }
+    cout << endl;
+
+    cout << "Enter Wholesale Cost: ";
+    cin >> newRecord.wsCost;
+
+    while(!isValid(newRecord.wsCost))
+    {
+        cout << "Enter Wholesale Cost: ";
+
+        cin.clear();
+        cin.ignore(1000, '\n');
+
+        cin >> newRecord.wsCost;
+    }
+    cout << endl;
+
+    cout << "Enter Retail Cost: ";
+    cin >> newRecord.retailCost;
+
+    while(!isValid(newRecord.retailCost))
+    {
+        cout << "Enter Retail Cost: ";
+
+        cin.clear();
+        cin.ignore(1000, '\n');
+
+        cin >> newRecord.retailCost;
+    }
+    
+    cout << endl;
+
+
+    /*outFile.write(descCStr, sizeof(descCStr));
+    outFile.write(productIDCStr, sizeof(productIDCStr));
+    outFile.write(reinterpret_cast<char *> (&newRecord.qty), sizeof(int));
+    outFile.write(reinterpret_cast<char *> (&newRecord.wsCost), sizeof(float));
+    outFile.write(reinterpret_cast<char *> (&newRecord.qty), sizeof(float));*/
+
+    outFile.write(reinterpret_cast<char *>(&newRecord), sizeof(newRecord));
+}
+
+bool init_File(fstream &newFile, string fileName, bool mode)
+{
+    bool isOpenable = false;
+
+    if (mode)
+    {
+        newFile.open(fileName, ios::app | ios::binary | ios::in);
+
+        if (newFile) isOpenable = true;
+    }
+    else if (!mode)
+    {
+        newFile.open(fileName, ios::in | ios::binary | ios::out);
+
+        if (newFile)
+        {
+            isOpenable = true;
+        }
+    }
+
+
+    return isOpenable;
+}
+
+
+string getFileName()
+{
+    bool fileValid;
+    string IOFileName;
+    cout << "Enter the file's name: ";
+    getline(cin, IOFileName);
+
+    fileValid = isFileValid(IOFileName);
+
+    while(!fileValid)
+    {
+        cout << "File name is incorrect, has to be .dat\n";
+        getline(cin, IOFileName);
+
+        fileValid = isFileValid(IOFileName);
+    }
+
+    return IOFileName;
+}
+
+int fileSearch(fstream &inf, char searchID[], string fileName)
+{
+    inventory test;
+    bool found = false;
+
+    int filePos = -1;
+
+    inf.seekg(0L, ios::beg);
+
+    inf.read(reinterpret_cast<char *> (&test), sizeof(test));
+
+    while (!inf.eof() && !found)
+    {
+        filePos = inf.tellg();
+        if (strcmp(test.productID, searchID) == 0)
+        {
+            found = true;
+            cout << test.description << endl;
+            cout << "Product ID ->"<< test.productID << endl;
+            cout << "Quantity ->" << test.qty << endl;
+            cout << "Retail Cost -> "<< test.retailCost << endl;
+            cout << "Wholesale Cost ->" << test.wsCost << endl << endl;
+            
+        }
+        inf.read(reinterpret_cast<char *> (&test), sizeof(test));
+    }
+
+    return filePos;
+}
+
+int changeRecord(string fileName, int searchPos)
+{
+    char change;
+    inventory test;
+
+    fstream ftest;
+
+    
+    init_File(ftest, fileName, false);
+
+    cout << "Before: " << searchPos;
+
+    ftest.read(reinterpret_cast<char *> (&test), sizeof(inventory));
+
+    searchPos -= sizeof(inventory);
+
+    cout << "After : " << searchPos;
+
+    ftest.seekp(searchPos);
+    cout << "\nRecord found, please enter the following: \n";
+
+
+    cin >> change;
+    cin.ignore();
+
+    cout << endl;
+
+
+    if (change == 'd' || change == 'D')
+    {
+        cout << "Enter the new description: ";
+        cin.getline(test.description, ARR_SIZE);
+        ftest.write(reinterpret_cast<char *>(&test), sizeof(test));
+    }
+    else if (change == 'q' || change == 'Q')
+    {
+        cout << "Enter the new quantity: ";
+        cin >> test.qty;
+    }
+    else if (change == 'w' || change == 'W')
+    {
+        cout << "Enter the new wholesale price: ";
+        cin >> test.wsCost;
+    }
+    else if (change == 'r' || change == 'R')
+    {
+        cout << "Enter the new retail price: ";
+        cin >> test.retailCost;
+    }
+
+    ftest.flush();
+
+    if (ftest.fail())
+        cout << "\nOperation failed well get em next toime\n";
+
+    return 0;
+}
