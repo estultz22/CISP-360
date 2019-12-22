@@ -1,0 +1,166 @@
+#include <iostream>
+#include <fstream>
+#include <cstring>
+
+using namespace std;
+
+
+bool init_File(fstream&, string, bool);
+void addRecords(fstream&);
+bool findRecord(fstream&, char []);
+
+void printMenu();
+
+struct inventory
+{
+    char desc[20];
+    char productID[20];
+    int qty;
+    float wsCost,
+          retCost;
+};
+
+
+int main()
+{
+    int choice,
+        quitLoop = 3;
+    string newFileName;
+    char findItem[20];
+    bool is_opened, is_Found;
+    fstream file;
+
+    do
+    {
+        printMenu();
+
+        cin >> choice;
+
+        cin.ignore();
+
+        if (choice == 1)
+        {
+            cout << "Enter the file name with extension .dat: ";
+
+            getline(cin, newFileName);
+
+            //assuming the filename is correct
+
+            is_opened = init_File(file, newFileName, true); //true = for writing, false for reading
+
+            if(is_opened)
+            {
+                cout << newFileName << "opened for writing\n\n";
+                addRecords(file);
+            }
+            else cout << "could not open file for writing, oops\n\n";
+
+            file.close();
+        }
+        else if(choice == 2)
+        {
+            cout << "Aight, which file you tryna open? >";
+            getline(cin, newFileName);
+
+            is_opened = init_File(file, newFileName, false); //true = for writing, false for reading
+
+            if(is_opened)
+            {
+                cout << newFileName << "opened for reading\n\n";
+                cout << "What product ID you tryna find? >";
+                cin >> findItem;
+
+                is_Found = findRecord(file, findItem);
+
+                if (!is_Found)
+                {
+                    cout << "Could not find " << findItem;
+                }
+            }
+            else cout << "could not open file for reading, oops\n\n";
+
+            file.close();
+        }
+
+    }while(quitLoop != choice);
+
+    return 0;
+}
+
+bool init_File(fstream &newFile, string fileName, bool mode)
+{
+    bool isOpenable = false;
+
+    if (mode)
+    {
+        newFile.open(fileName, ios::app | ios::binary);
+
+        if (newFile) isOpenable = true;
+    }
+    else if (!mode)
+    {
+        newFile.open(fileName, ios::in | ios::binary);
+
+        if (newFile)
+        {
+            isOpenable = true;
+        }
+    }
+
+
+    return isOpenable;
+}
+
+void printMenu()
+{
+    cout << "1. Add new records to the file\n" << "2. Display any records in the file\n"
+         << "3. Quit\n";
+    cout << "What say you?: >";
+}
+
+void addRecords(fstream &file)
+{
+    int arrSize = 20;
+    inventory newRecord;
+
+    cout << "Enter description: >";
+    cin.getline(newRecord.desc, arrSize);
+    cout << endl;
+
+    cout << "Enter Product ID: >";
+    cin.getline(newRecord.productID, arrSize);
+    cout << endl;
+
+    cout << "Enter Quantity on hand: >";
+    cin >> newRecord.qty;
+    cout << endl;
+
+    cout << "Enter Wholesale Cost: >";
+    cin >> newRecord.wsCost;
+    cout << endl;
+
+    cout << "Enter Retail Cost bruh: >";
+    cin >> newRecord.retCost;
+    cout << endl;
+
+    file.write(reinterpret_cast(&newRecord), sizeof(inventory));
+
+}
+
+bool findRecord(fstream &file, char itemID[])
+{
+    const int arrSize = 10;
+    inventory arr[arrSize];
+    bool found = false;
+
+    file.read(reinterpret_cast(&arr), sizeof(arrSize));
+
+    //file.seekg(ios::beg);
+    for (unsigned i = 0; i < arrSize; i++)
+    {
+        cout << arr[i].productID;
+    }
+
+    //delete [] arr;
+    return found;
+}
